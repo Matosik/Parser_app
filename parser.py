@@ -2,11 +2,14 @@ import requests
 from bs4 import BeautifulSoup as bs
 import os
 from time import sleep
-import create_dataset as cd
+import create_dataset as cd #создание папки
+import Parserapp as mainParser #главное окно приложения
+import sys
+
 
 headers = {"Accept": "*/*","User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"}
 
-def parser(page, query,path_folder ,amount=100):
+def parser(page:str, query,path_folder ,amount=10):
     counter_img=0
     while(counter_img<amount):
         sleep(0.46)
@@ -29,21 +32,107 @@ def parser(page, query,path_folder ,amount=100):
                 counter_img+=1
                 counter_locale+=1
             i+=1
+    return None
+
+def push_request():
+    global request
+    global check_request
+    if(len(ui.name_reqeust.text())==0):
+        msg = mainParser.QMessageBox()
+        msg.setWindowTitle("Ошибка")
+        msg.setText("Запрос не может быть пустым!")
+        msg.setIcon(mainParser.QMessageBox.Warning)
+        msg.exec_()
+        check_request=False
+    else:
+        request=ui.name_reqeust.text()
+        check_request=True
+        print("УРА")
+
+def push_path():
+    global path
+    global check_path
+    if(os.path.exists(ui.full_path.text())==False):
+        msg = mainParser.QMessageBox()
+        msg.setWindowTitle("Ошибка")
+        msg.setText("Неверный путь!")
+        msg.setIcon(mainParser.QMessageBox.Warning)
+        msg.exec_()
+        check_path=False
+    else:
+        path=ui.full_path.text()
+        check_path=True
+        print("УРА")
+
+def push_folder():
+    global folder
+    global check_folder
+    if(len(ui.name_folder.text())==0):
+        msg = mainParser.QMessageBox()
+        msg.setWindowTitle("Ошибка")
+        msg.setText("Папку нужно как то назвать!")
+        msg.setIcon(mainParser.QMessageBox.Warning)
+        msg.exec_()
+        check_folder=False
+    else:
+        check_folder=True
+        folder=ui.name_folder.text()
+        print("УРА")
 
 
+def start():
+    if(check_folder==False):
+        msg = mainParser.QMessageBox()
+        msg.setWindowTitle("Ошибка")
+        msg.setText("Сперва нужно как то назвать папку!")
+        msg.setIcon(mainParser.QMessageBox.Warning)
+        msg.exec_()
+    elif(check_request==False):
+        msg = mainParser.QMessageBox()
+        msg.setWindowTitle("Ошибка")
+        msg.setText("Нужно написать запрос!")
+        msg.setIcon(mainParser.QMessageBox.Warning)
+        msg.exec_()
+    else:
+        if(check_path==False):
+            page=10
+            pf=cd.make_folder(folder)
+            parser(page,request,pf)
+        else:
+            page=10
+            pf=cd.make_folder(folder,path)
 
 
 if (__name__== "__main__"):
-    page=10
-    request=input("введите какие картинки хотите найти: ")
-    amount=int(input("Введите количество картинок: "))
-    name_folder=input("Введите название папки: ")
+    global check_path
+    global check_folder
+    global check_request
+    check_request=False
+    check_path=False
+    check_folder=False
+    #request=input("введите какие картинки хотите найти: ")
+    #amount=int(input("Введите количество картинок: "))
+    #name_folder=input("Введите название папки: ")
 
     #path=input("Введите путь для папки")
-    path="C:/Users/79093/Desktop"
+    #path="C:/Users/79093/Desktop"
 
-    pf=cd.make_folder(name_folder,path)
-    parser(page,request,pf,amount)
+    #pf=cd.make_folder(name_folder,path)
+    #parser(page,request,pf,amount)
+    #==================================================#
+    app = mainParser.QtWidgets.QApplication(sys.argv)  #
+    Application = mainParser.QtWidgets.QMainWindow()   #
+    ui = mainParser.Ui_parser()                        #
+    ui.setupUi(Application)                            #
+    Application.show()                                 #
+    #==================================================#
+    ui.take_request.clicked.connect(push_request)
+    ui.take_the_path.clicked.connect(push_path)
+    ui.take_folder.clicked.connect(push_folder)
+    ui.start_parsing.clicked.connect(start)
+
+    sys.exit(app.exec_())   
+    
 
 
 
