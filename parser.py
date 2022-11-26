@@ -10,6 +10,7 @@ import sys
 headers = {"Accept": "*/*","User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"}
 
 def parser(page:str, query,path_folder ,amount=10):
+    print("НАЧАЛИ ПАРСИТЬ")
     counter_img=0
     while(counter_img<amount):
         sleep(0.46)
@@ -101,6 +102,7 @@ def start():
         else:
             page=10
             pf=cd.make_folder(folder,path)
+            parser(page,request,pf)
 
 
 if (__name__== "__main__"):
@@ -110,20 +112,15 @@ if (__name__== "__main__"):
     check_request=False
     check_path=False
     check_folder=False
-    #request=input("введите какие картинки хотите найти: ")
-    #amount=int(input("Введите количество картинок: "))
-    #name_folder=input("Введите название папки: ")
-
-    #path=input("Введите путь для папки")
-    #path="C:/Users/79093/Desktop"
-
-    #pf=cd.make_folder(name_folder,path)
-    #parser(page,request,pf,amount)
     #==================================================#
     app = mainParser.QtWidgets.QApplication(sys.argv)  #
     Application = mainParser.QtWidgets.QMainWindow()   #
     ui = mainParser.Ui_parser()                        #
-    ui.setupUi(Application)                            #
+    ui.setupUi(Application)   
+    #ui.setWindowsTitle("Парсер картинок")
+    ui.name_reqeust.setPlaceholderText("запрос")
+    ui.full_path.setPlaceholderText(os.getcwd())
+    ui.name_folder.setPlaceholderText("имя для папки")                         #
     Application.show()                                 #
     #==================================================#
     ui.take_request.clicked.connect(push_request)
